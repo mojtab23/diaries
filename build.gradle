@@ -1,0 +1,33 @@
+group 'io.github.mojtab23'
+version '1.0-SNAPSHOT'
+
+buildscript {
+
+    repositories {
+        mavenCentral()
+    }
+}
+
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    compile 'de.jensd:fontawesomefx-fontawesome:4.7.0-5'
+    compile 'de.jensd:fontawesomefx-materialdesignfont:1.7.22-4'
+    compile 'de.jensd:fontawesomefx-controls:8.15'
+    // https://mvnrepository.com/artifact/com.ibm.icu/icu4j
+    compile group: 'com.ibm.icu', name: 'icu4j', version: '59.1'
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    compile 'org.springframework:spring-context:4.3.8.RELEASE'
+    compile 'com.jfoenix:jfoenix:1.4.0'
+    compile 'org.jetbrains.xodus:xodus-openAPI:1.0.4'
+    // https://mvnrepository.com/artifact/org.jetbrains.xodus/xodus-entity-store
+    compile group: 'org.jetbrains.xodus', name: 'xodus-entity-store', version: '1.0.4'
+    compile 'org.apache.commons:commons-crypto:1.0.0'
+    testCompile 'junit:junit:4.12'
+}

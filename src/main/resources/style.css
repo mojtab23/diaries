@@ -1,0 +1,81 @@
+.root {
+    -icons-color: #75ff3f;
+}
+
+.dark-pane {
+    -fx-background-color: #30293c;
+}
+
+.table-view .column-header,
+.table-view .column-header .filler,
+.table-view .column-header-background .filler {
+    /*-fx-base: #494348;*/
+    -fx-control-inner-background: transparent;
+    -fx-background-color: #494348;
+    -fx-table-cell-border-color: transparent;
+    -fx-table-header-border-color: transparent;
+    -fx-padding: 5;
+}
+
+.table-view:focused .table-row-cell:filled:focused:selected .label {
+    -fx-text-fill: #EC784D;
+}
+
+.table-view:focused .table-row-cell:filled:focused:selected {
+    -fx-background-color: #EC784D;
+    -fx-opacity: 0.6;
+}
+
+.table-view {
+    -fx-base: #494348;
+    -fx-background-color: #343347;
+}
+
+.column-header .label {
+    -fx-text-fill: #e5b857;
+    -fx-opacity: 1;
+}
+
+.label {
+    -fx-text-fill: #878D84;
+    -fx-opacity: 0.6;
+}
+
+.jfx-text-field, .jfx-text-area, .jfx-password-field, .time-picker-display-node {
+    -fx-font-size: 16.0;
+    -jfx-unfocus-color: #878D84;
+    -fx-text-fill: #ded4eb;
+    -jfx-focus-color: #F1C360;
+}
+
+.button {
+    -fx-background-color: #EC784D;
+    -fx-font-size: 16.0;
+    -fx-text-fill: #ded4eb;
+}
+
+.diary-editor {
+    -fx-font-size: 16.0;
+    -fx-hgap: 6px;
+    -fx-vgap: 18px;
+    -fx-background-radius: 2;
+    -fx-border-radius: 2;
+    -fx-background-color: #343347;
+    -fx-border-width: 6px;
+    -fx-border-color: #343347;
+}
+
+.new-icon {
+    -fx-text-fill: -icons-color;
+    -fx-fill: -icons-color;
+    -glyph-size: 36px;
+    /*-fx-background-color: #75ff3f;*/
+    /*-fx-label-padding: 2px;*/
+    /*-fx-background-radius: 4px;*/
+    /*-fx-effect: dropshadow(two-pass-box, #75ff3f, 4, 0, 0, 0);*/
+}
+
+.persian-date-label {
+    -fx-text-fill: #ffd15b;
+    /*-fx-font-weight: bold;*/
+}
