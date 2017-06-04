@@ -10,6 +10,7 @@ import com.jfoenix.controls.JFXTimePicker;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import io.github.mojtab23.diaries.model.diary.Diary;
+import io.github.mojtab23.diaries.repository.DiaryRepository;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;

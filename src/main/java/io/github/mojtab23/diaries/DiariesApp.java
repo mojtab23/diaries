@@ -6,8 +6,8 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.SpringApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 
 /**
  * Created by mojtab23 on 5/4/2017.
@@ -18,7 +18,7 @@ public class DiariesApp extends Application {
     private static final Logger LOGGER = LoggerFactory.getLogger(DiariesApp.class);
 
 
-    private static AnnotationConfigApplicationContext context;
+    private static ConfigurableApplicationContext context;
     private Scene scene;
     private String styleUrl = this.getClass().getResource("/style.css").toExternalForm();
 
@@ -30,8 +30,8 @@ public class DiariesApp extends Application {
     @Override
     public void init() throws Exception {
 //        System.out.println("in init...");
-        context = new AnnotationConfigApplicationContext(SpringConfig.class);
-
+//        context = new AnnotationConfigApplicationContext(SpringConfig.class);
+        context = SpringApplication.run(SpringConfig.class);
         LOGGER.info("after init...");
     }
 

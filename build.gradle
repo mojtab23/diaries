@@ -2,13 +2,21 @@ group 'io.github.mojtab23'
 version '1.0-SNAPSHOT'
 
 buildscript {
-
+    ext {
+        springBootVersion = '1.5.3.RELEASE'
+    }
     repositories {
         mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     }
 }
 
 apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+
+sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -23,11 +31,13 @@ dependencies {
     compile group: 'com.ibm.icu', name: 'icu4j', version: '59.1'
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-    compile 'org.springframework:spring-context:4.3.8.RELEASE'
     compile 'com.jfoenix:jfoenix:1.4.0'
     compile 'org.jetbrains.xodus:xodus-openAPI:1.0.4'
     // https://mvnrepository.com/artifact/org.jetbrains.xodus/xodus-entity-store
     compile group: 'org.jetbrains.xodus', name: 'xodus-entity-store', version: '1.0.4'
     compile 'org.apache.commons:commons-crypto:1.0.0'
-    testCompile 'junit:junit:4.12'
+    compile('org.springframework.boot:spring-boot-starter')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+
+
 }

@@ -1,4 +1,4 @@
-import io.github.mojtab23.diaries.DiaryRepository;
+import io.github.mojtab23.diaries.repository.DiaryRepository;
 import io.github.mojtab23.diaries.model.diary.Diary;
 import org.junit.After;
 import org.junit.Before;

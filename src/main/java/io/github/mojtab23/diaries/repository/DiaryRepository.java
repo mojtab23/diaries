@@ -1,5 +1,6 @@
-package io.github.mojtab23.diaries;
+package io.github.mojtab23.diaries.repository;
 
+import io.github.mojtab23.diaries.InstantBinding;
 import io.github.mojtab23.diaries.model.diary.Diary;
 import jetbrains.exodus.entitystore.*;
 import org.jetbrains.annotations.Nullable;

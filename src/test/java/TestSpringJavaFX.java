@@ -1,5 +1,5 @@
 import io.github.mojtab23.diaries.DiariesView;
-import io.github.mojtab23.diaries.DiaryRepository;
+import io.github.mojtab23.diaries.repository.DiaryRepository;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
