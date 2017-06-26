@@ -1,9 +1,13 @@
 package io.github.mojtab23.diaries.model.diary;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.net.NetworkInterface;
 import java.nio.BufferUnderflowException;
@@ -18,13 +22,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 
 public class Id implements Comparable<Id>, Serializable {
+    public static final int ID_BYTES = Long.BYTES + (3 * Integer.BYTES);
     private static final Logger LOGGER = LoggerFactory.getLogger(Id.class);
-
     private final static int machineId;
     private final static int processId;
     private final static SecureRandom secureRandom = new SecureRandom();
     private final static AtomicInteger nextCounter = new AtomicInteger(secureRandom.nextInt());
-    private static final int ID_BYTES = Long.BYTES + (3 * Integer.BYTES);
     private static final long serialVersionUID = 3954054651967389957L;
 
     static {
@@ -102,6 +105,21 @@ public class Id implements Comparable<Id>, Serializable {
         return machinePiece;
     }
 
+    @Nullable
+    public static Id readId(DataInputStream inputStream) {
+        try {
+            final long time = inputStream.readLong();
+            final int machineId = inputStream.readInt();
+            final int processId = inputStream.readInt();
+            final int counter = inputStream.readInt();
+            return new Id(time, machineId, processId, counter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    @NotNull
     public static Id createId(byte[] bytes) {
         if (bytes.length != ID_BYTES) {
             LOGGER.warn("size miss match! expect:" + ID_BYTES + " but input size:" + bytes.length);
@@ -118,9 +136,20 @@ public class Id implements Comparable<Id>, Serializable {
         }
     }
 
-    public byte[] toByteArray() {
-        return ByteBuffer.allocate(ID_BYTES).putLong(timestamp).
-                putInt(machineIdentifier).putInt(processIdentifier).putInt(counter).array();
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public int getMachineIdentifier() {
+        return machineIdentifier;
+    }
+
+    public int getProcessIdentifier() {
+        return processIdentifier;
+    }
+
+    public int getCounter() {
+        return counter;
     }
 
     @Override
@@ -168,4 +197,10 @@ public class Id implements Comparable<Id>, Serializable {
         result = 31 * result + counter;
         return result;
     }
+
+    public byte[] toByteArray() {
+        return ByteBuffer.allocate(ID_BYTES).putLong(timestamp).
+                putInt(machineIdentifier).putInt(processIdentifier).putInt(counter).array();
+    }
+
 }

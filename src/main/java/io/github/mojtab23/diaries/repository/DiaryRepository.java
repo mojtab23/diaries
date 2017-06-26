@@ -1,123 +1,117 @@
 package io.github.mojtab23.diaries.repository;
 
-import io.github.mojtab23.diaries.InstantBinding;
+import io.github.mojtab23.diaries.binding.KeyEntryBinding;
 import io.github.mojtab23.diaries.model.diary.Diary;
-import jetbrains.exodus.entitystore.*;
-import org.jetbrains.annotations.Nullable;
+import io.github.mojtab23.diaries.model.diary.KeyEntry;
+import io.github.mojtab23.diaries.service.DiaryService;
+import io.github.mojtab23.diaries.util.Tuple;
+import jetbrains.exodus.ArrayByteIterable;
+import jetbrains.exodus.ByteIterable;
+import jetbrains.exodus.env.*;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.annotation.PreDestroy;
-import java.time.Instant;
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by mojtab23 on 5/5/2017.
+ * Created by mojtab23 on 6/4/2017.
  */
 
 @Repository
 public class DiaryRepository {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DiaryRepository.class);
 
-    private final PersistentEntityStore entityStore;
-    private final String entityType = "Diary";
+    private final DiaryService diaryService;
+    private Environment env;
+    private Store diaryStore;
 
-    public DiaryRepository() {
-        entityStore = PersistentEntityStores.newInstance(".DiariesAppData");
+    @Autowired
+    public DiaryRepository(DiaryService diaryService) {
+        this.diaryService = diaryService;
+    }
 
+    @PostConstruct
+    public void init() {
+        env = Environments.newInstance(".DiariesData");
+        openDiaryStore();
 
     }
 
+    private void openDiaryStore() {
 
-    public void saveDiary(final Diary diary) {
-        entityStore.executeInTransaction((StoreTransaction txn) -> {
-            try {
-                entityStore.registerCustomPropertyType(txn, Instant.class, InstantBinding.BINDING);
-            } catch (EntityStoreException ignored) {
-                // TODO: 5/23/2017 should update xodus to 1.0.6
-            }
-            diaryToEntity(diary, txn);
-        });
+        diaryStore = env.computeInTransaction(txn ->
+                env.openStore("Diary", StoreConfig.WITHOUT_DUPLICATES, txn));
 
     }
 
-    public Entity diaryToEntity(final Diary diary, final StoreTransaction txn) {
-
-        final Entity diaryEntity = txn.newEntity(entityType);
-        diaryEntity.setProperty("text", diary.getText());
-
-        diaryEntity.setProperty("timestamp", diary.getTimestamp());
-        return diaryEntity;
+    public void saveNewDiary(@NotNull final Diary diary) {
+//        final List<Tuple<KeyEntry, ArrayByteIterable>> tupleList = diaryService.diaryToTuple(diary, false);
+//        env.executeInTransaction(txn -> {
+//            for (Tuple<KeyEntry, ArrayByteIterable> tuple : tupleList) {
+//                if (!diaryStore.add(txn, KeyEntryBinding.keyEntryToEntry(tuple.getA()), encrypt(tuple.getB()))) {
+//                    LOGGER.error("duplicate key!");
+//                }
+//            }
+//        });
     }
 
-
-    public Diary entityToDiary(final Entity entity, final StoreTransaction txn) {
-
-
-        final @Nullable String text = (String) entity.getProperty("text");
-        final @Nullable Instant timestamp = (Instant) entity.getProperty("timestamp");
-//        final ByteIterable timestampRow = entity.getRawProperty("timestamp");
-
-        if (text != null) {
-            if (timestamp/*Row*/ != null) {
-//                final Instant timestamp = InstantBinding.entryToInstant(timestampRow);
-                return new Diary(text, timestamp);
-            } else
-                return new Diary(text, Instant.MIN);
-        }
-        return null;
-    }
 
     public List<Diary> readAllDiaries() {
+        return env.computeInTransaction(txn -> {
 
-        return entityStore.computeInReadonlyTransaction(txn -> {
-            try {
-                entityStore.registerCustomPropertyType(txn, Instant.class, InstantBinding.BINDING);
-            } catch (EntityStoreException ignored) {
-                // TODO: 5/23/2017 should update xodus to 1.0.6
+            try (final Cursor cursor = diaryStore.openCursor(txn)) {
+                List<List<Tuple<KeyEntry, ByteIterable>>> objectList = new ArrayList<>();
+                List<Tuple<KeyEntry, ByteIterable>> tupleList = new ArrayList<>();
+                objectList.add(tupleList);
+                KeyEntry lastKey = null;
+                KeyEntry newKey;
+
+
+                while (cursor.getNext()) {
+                    newKey = KeyEntryBinding.entryToKeyEntry(cursor.getKey());
+                    if (newKey != null) {
+                        if (lastKey != null) {
+                            if (!lastKey.getId().equals(newKey.getId())) {
+                                tupleList = new ArrayList<>();
+                                objectList.add(tupleList);
+                            }
+                        }
+                        tupleList.add(new Tuple<>(newKey, cursor.getValue()));
+                        lastKey = newKey;
+                    } else {
+                        LOGGER.error("error in reading key.");
+                    }
+                }
+
+                final ArrayList<Diary> diaries = new ArrayList<>();
+                for (List<Tuple<KeyEntry, ByteIterable>> tuple : objectList) {
+//                    final Diary diary = diaryService.tupleToDiary(tuple);
+//                    diaries.add(diary);
+                }
+                return diaries;
+            } catch (Exception e) {
+                LOGGER.error("Can't parse diary from database.", e);
+                e.printStackTrace();
             }
-
-
-            final EntityIterable allDiaries = txn.getAll(entityType);
-//            final long size = allDiaries.size();
-//            if ((size < 1)) {
-//                return Collections.EMPTY_LIST;
-//            } else {
-            final List<Diary> diaryList = new ArrayList<>();
-            allDiaries.forEach(entity -> {
-                final Diary e = entityToDiary(entity, txn);
-                if (e != null) {
-                    diaryList.add(e);
-                }
-            });
-            LOGGER.warn("Number of Diaries: " + diaryList.size());
-            return diaryList;
-
+            return null;
         });
-
     }
 
-    public void deleteAll() {
-
-        entityStore.executeInTransaction(txn -> {
-
-
-            txn.getAll(entityType).forEach(entity ->
-            {
-                if (!entity.delete()) {
-                    LOGGER.warn("cant delete {}", entityToDiary(entity, txn));
-                }
-            });
-        });
-
+    private ByteIterable encrypt(ByteIterable row) {
+        // TODO: 6/4/2017 impl encryption
+        return row;
     }
 
-
-    @PreDestroy
-    public void atEnd() {
-        entityStore.close();
+    private ByteIterable decrypt(ByteIterable row) {
+        // TODO: 6/4/2017 impl encryption
+        return row;
     }
+
 
 }

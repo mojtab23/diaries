@@ -10,7 +10,7 @@ import com.jfoenix.controls.JFXTimePicker;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIcon;
 import de.jensd.fx.glyphs.materialdesignicons.MaterialDesignIconView;
 import io.github.mojtab23.diaries.model.diary.Diary;
-import io.github.mojtab23.diaries.repository.DiaryRepository;
+import io.github.mojtab23.diaries.repository.DiaryRepository1;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.StringBinding;
 import javafx.beans.property.BooleanProperty;
@@ -52,7 +52,7 @@ public class DiariesView extends GridPane {
     private static final Logger LOGGER = LoggerFactory.getLogger(DiariesView.class);
     private final static String DEFAULT_COLOR = "#F1C360";
     private final ObservableList<Diary> diaries = FXCollections.observableArrayList();
-    private final DiaryRepository repository;
+    private final DiaryRepository1 repository;
     private final Diary newDiary = new Diary();
     private final BooleanProperty isEdited = new SimpleBooleanProperty(false);
     private final ChangeListener<LocalTime> timeListener = (observable, oldValue, newValue) -> {
@@ -79,7 +79,7 @@ public class DiariesView extends GridPane {
 
 
     @Autowired
-    public DiariesView(DiaryRepository repository) {
+    public DiariesView(DiaryRepository1 repository) {
         super();
         this.repository = repository;
     }

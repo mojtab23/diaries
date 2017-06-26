@@ -1,5 +1,6 @@
 package io.github.mojtab23.diaries;
 
+import io.github.mojtab23.diaries.binding.InstantBinding;
 import jetbrains.exodus.ArrayByteIterable;
 import org.junit.Assert;
 import org.junit.Test;

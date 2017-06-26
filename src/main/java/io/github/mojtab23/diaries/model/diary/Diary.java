@@ -13,19 +13,29 @@ import java.time.Instant;
  */
 public class Diary implements Cloneable {
 
+    public static final String ENTITY_TYPE = "Diary";
+
     private final ObjectProperty<Instant> timestamp;
+    //    private final StringProperty title;
     private final StringProperty text;
     private EntityId id;
 
     public Diary() {
         this.text = new SimpleStringProperty();
         timestamp = new SimpleObjectProperty<>(Instant.now());
+//        title = new SimpleStringProperty();
     }
 
     public Diary(String text, Instant time) {
         this.text = new SimpleStringProperty(text);
         timestamp = new SimpleObjectProperty<>(time);
 
+    }
+
+    public Diary(String text, Instant time, EntityId id) {
+        this.text = new SimpleStringProperty(text);
+        timestamp = new SimpleObjectProperty<>(time);
+        this.id = id;
     }
 
     public Diary(SimpleObjectProperty<Instant> timestamp, StringProperty text, EntityId id) {

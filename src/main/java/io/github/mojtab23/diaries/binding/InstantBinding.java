@@ -1,4 +1,4 @@
-package io.github.mojtab23.diaries;
+package io.github.mojtab23.diaries.binding;
 
 import jetbrains.exodus.ArrayByteIterable;
 import jetbrains.exodus.ByteIterable;
@@ -27,7 +27,7 @@ public class InstantBinding extends ComparableBinding {
 
     @Override
     public Comparable readObject(@NotNull ByteArrayInputStream stream) {
-        final long l = BindingUtils.readLong(stream);
+        final long l = BindingUtils.readString()readLong(stream);
         final int i = BindingUtils.readInt(stream);
         return Instant.ofEpochSecond(l, i);
     }

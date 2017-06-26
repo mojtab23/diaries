@@ -1,5 +1,7 @@
 import io.github.mojtab23.diaries.DiariesView;
-import io.github.mojtab23.diaries.repository.DiaryRepository;
+import io.github.mojtab23.diaries.repository.DiaryRepository1;
+import io.github.mojtab23.diaries.service.CipherService;
+import io.github.mojtab23.diaries.service.DiaryService;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.VBox;
@@ -33,8 +35,12 @@ public class TestSpringJavaFX extends Application {
 //        root.getChildren().add(control1);// TODO: 5/6/2017 create new view
 //        root.getChildren().add(new JFXRippler(control2));// TODO: 5/6/2017 create new view
 //        root.getChildren().add(new JFXRippler(control3));// TODO: 5/6/2017 create new view
-
-        final DiariesView diariesView = new DiariesView(new DiaryRepository());
+        final CipherService cipherService = new CipherService();
+        cipherService.init();
+        byte[] key = "Bar12345Bar12345".getBytes("UTF-8");
+        cipherService.setKey(key);
+        DiaryService diaryService = new DiaryService(cipherService);
+        final DiariesView diariesView = new DiariesView(new DiaryRepository1(diaryService));
         diariesView.init();
         root.getChildren().add(diariesView);
 
