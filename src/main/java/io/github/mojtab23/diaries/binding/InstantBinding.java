@@ -27,7 +27,7 @@ public class InstantBinding extends ComparableBinding {
 
     @Override
     public Comparable readObject(@NotNull ByteArrayInputStream stream) {
-        final long l = BindingUtils.readString()readLong(stream);
+        final long l = BindingUtils.readLong(stream);
         final int i = BindingUtils.readInt(stream);
         return Instant.ofEpochSecond(l, i);
     }

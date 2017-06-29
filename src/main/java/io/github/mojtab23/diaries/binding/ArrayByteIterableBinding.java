@@ -22,25 +22,25 @@ public class ArrayByteIterableBinding extends ComparableBinding {
     @Override
     public Comparable readObject(@NotNull ByteArrayInputStream stream) {
         try {
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
 
-        int nRead;
-        byte[] data = new byte[1000];
+            int nRead;
+            byte[] data = new byte[1000];
 
-        while ((nRead = stream.read(data, 0, data.length)) != -1) {
-            buffer.write(data, 0, nRead);
-        }
-
-
+            while ((nRead = stream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
             buffer.flush();
-            return new ArrayByteIterable(buffer.toByteArray())
+            return new ArrayByteIterable(buffer.toByteArray());
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
     @Override
     public void writeObject(@NotNull LightOutputStream output, @NotNull Comparable object) {
-
+        final ArrayByteIterable arrayByteIterable = ((ArrayByteIterable) object);
+        arrayByteIterable.writeTo(output);
     }
 }

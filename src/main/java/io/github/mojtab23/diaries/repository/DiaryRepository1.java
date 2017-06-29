@@ -1,6 +1,6 @@
 package io.github.mojtab23.diaries.repository;
 
-import io.github.mojtab23.diaries.binding.InstantBinding;
+import io.github.mojtab23.diaries.binding.ArrayByteIterableBinding;
 import io.github.mojtab23.diaries.model.diary.Diary;
 import io.github.mojtab23.diaries.service.DiaryService;
 import jetbrains.exodus.ArrayByteIterable;
@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PreDestroy;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,12 +35,7 @@ public class DiaryRepository1 {
 
     public void saveDiary(final Diary diary) {
         entityStore.executeInTransaction((StoreTransaction txn) -> {
-            try {
-//                entityStore.registerCustomPropertyType(txn, Instant.class, InstantBinding.BINDING);
-                entityStore.registerCustomPropertyType(txn, ArrayByteIterable.class, ArrayByteIterable.BINDING);
-            } catch (EntityStoreException ignored) {
-                // TODO: 5/23/2017 should update xodus to 1.0.6
-            }
+            registerCustomTypes(txn);
             diaryService.diaryToEntity(diary, txn);
         });
 
@@ -51,12 +45,7 @@ public class DiaryRepository1 {
     public List<Diary> readAllDiaries() {
 
         return entityStore.computeInReadonlyTransaction(txn -> {
-//            try {
-//                entityStore.registerCustomPropertyType(txn, Instant.class, InstantBinding.BINDING);
-//            } catch (EntityStoreException ignored) {
-//                // TODO: 5/23/2017 should update xodus to 1.0.6
-//            }
-
+            registerCustomTypes(txn);
 
             final EntityIterable allDiaries = txn.getAll(Diary.ENTITY_TYPE);
 //            final long size = allDiaries.size();
@@ -79,15 +68,33 @@ public class DiaryRepository1 {
 
     public void deleteAll() {
 
-        entityStore.executeInTransaction(txn -> txn.getAll(Diary.ENTITY_TYPE).forEach(entity ->
-        {
-            if (!entity.delete()) {
-                LOGGER.warn("cant delete {}", diaryService.entityToDiary(entity));
+        entityStore.executeInTransaction(txn -> {
+
+            registerCustomTypes(txn);
+            final EntityIterable entities = txn.getAll(Diary.ENTITY_TYPE);
+            long count = 0;
+            for (Entity entity : entities) {
+                if (!entity.delete()) {
+                    LOGGER.warn("cant delete {}", diaryService.entityToDiary(entity));
+                } else count++;
             }
-        }));
+            LOGGER.info("{} Diaries deleted!", count);
+
+        });
 
     }
 
+
+    private void registerCustomTypes(StoreTransaction txn) {
+        try {
+//                entityStore.registerCustomPropertyType(txn, Instant.class, InstantBinding.BINDING);
+            entityStore.registerCustomPropertyType(txn, ArrayByteIterable.class, ArrayByteIterableBinding.BINDING);
+
+        } catch (EntityStoreException ignored) {
+            // TODO: 5/23/2017 should update xodus to 1.0.6
+        }
+
+    }
 
     @PreDestroy
     public void atEnd() {

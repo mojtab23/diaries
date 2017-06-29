@@ -32,7 +32,7 @@ public class DiaryRepository1Test {
 
     @Test
     public void testSave() throws Exception {
-        diaryRepository.saveDiary(new Diary("salam", Instant.now()));
+        diaryRepository.saveDiary(new Diary("salam1", Instant.now()));
 
 
     }
@@ -42,10 +42,14 @@ public class DiaryRepository1Test {
         final List<Diary> diaries = diaryRepository.readAllDiaries();
         System.out.println("Diaries:");
         for (Diary diary : diaries) {
-            System.out.println(diary);
+            System.out.println("    "+diary);
         }
     }
 
+    @Test
+    public void testDeleteAll() throws Exception {
+        diaryRepository.deleteAll();
+    }
 
     @After
     public void tearDown() throws Exception {
